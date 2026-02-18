@@ -1,0 +1,87 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-17T16:27:07.348Z",
+  "summary": "Diff adds a TanStack Router-based frontend with cyberpunk styling, charts (Recharts), reminders banner logic, analytics/scoring utilities, and non-dev logging form. However, it introduces Internet Identity authentication hooks (not requested and explicitly disallowed) and the theme/palette appears implemented via OKLCH conversions and hardcoded OKLCH colors rather than using the exact specified hex palette values. Also, the Reality Analytics UI shown does not render the required >4h distraction warning message.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Use only the specified color palette values exactly as provided (hex) across the UI theme.",
+      "reason": "The theme variables and some component colors are expressed in OKLCH (and even hardcoded OKLCH strings), which does not meet the requirement to use the specified hex values exactly as provided.",
+      "evidence": [
+        "frontend/src/index.css",
+        "frontend/src/components/charts/RealityPieChart.tsx",
+        "frontend/src/components/charts/WeeklyChart.tsx"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "requirement": "Show a prominent warning message when today’s distraction time exceeds 4 hours with exact text “WARNING: YOU ARE SLIPPING.”",
+      "reason": "Although the copy constant exists, the RealityAnalytics component shown does not contain any conditional rendering for the warning based on today’s non-dev hours.",
+      "evidence": [
+        "frontend/src/lib/copy.ts",
+        "frontend/src/components/reality/RealityAnalytics.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Internet Identity / third-party authentication integration (AuthClient, identity context, actor creation depending on authentication).",
+      "reason": "BuildRequest constraints explicitly say not to implement third-party authentication providers; the diff adds Internet Identity auth and actor plumbing.",
+      "evidence": [
+        "frontend/src/hooks/useInternetIdentity.ts",
+        "frontend/src/hooks/useActor.ts"
+      ]
+    },
+    {
+      "description": "Backend canister scaffold (Motoko actor).",
+      "reason": "BuildRequest is frontend-focused with local persistence and explicitly avoids external backend dependencies; adding a backend actor is not requested by any requirement.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "confidence": 0.72,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/charts/RealityPieChart.tsx",
+    "frontend/src/components/charts/WeeklyChart.tsx",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/navigation/BottomNav.tsx",
+    "frontend/src/components/reality/NonDevLogForm.tsx",
+    "frontend/src/components/reality/RealityAnalytics.tsx",
+    "frontend/src/components/reminders/ReminderBanner.tsx",
+    "frontend/src/components/settings/ResetControl.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useAutosave.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/index.css",
+    "frontend/src/lib/analytics.ts",
+    "frontend/src/lib/copy.ts",
+    "frontend/src/lib/dates.ts",
+    "frontend/src/lib/quotes.ts",
+    "frontend/src/lib/reminders.ts",
+    "frontend/src/lib/scoring.ts",
+    "frontend/src/lib/stats.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/DailySummaryPage.tsx",
+    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/pages/DevLogPage.tsx",
+    "frontend/src/pages/HistoryPage.tsx",
+    "frontend/src/pages/InitializePage.tsx",
+    "frontend/src/pages/RealityCheckPage.tsx",
+    "frontend/src/pages/StatsGrowthPage.tsx",
+    "frontend/src/state/badges.ts",
+    "frontend/src/state/devLogs.ts",
+    "frontend/src/state/nonDevLogs.ts",
+    "frontend/src/state/storage.ts",
+    "frontend/src/state/useAppState.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

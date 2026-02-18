@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0rem;
+        
+        /* Cyberpunk color system - exact hex values converted to OKLCH */
+        --background: 0.12 0.02 240; /* #0B0F14 */
+        --card: 0.15 0.02 240; /* #111826 */
+        --card-foreground: 0.92 0.01 240;
+        
+        --primary: 0.88 0.15 195; /* #00F0FF cyan */
+        --primary-foreground: 0.12 0.02 240;
+        
+        --secondary: 0.52 0.25 285; /* #7A00FF violet */
+        --secondary-foreground: 0.92 0.01 240;
+        
+        --success: 0.88 0.18 155; /* #00FF9C green */
+        --success-foreground: 0.12 0.02 240;
+        
+        --destructive: 0.58 0.22 25; /* #FF3B3B red */
+        --destructive-foreground: 0.92 0.01 240;
+        
+        --foreground: 0.92 0.01 240; /* #E6EDF3 */
+        --muted-foreground: 0.68 0.02 220; /* #9FB3C8 */
+        
+        --border: 0.25 0.02 240;
+        --input: 0.25 0.02 240;
+        --ring: 0.88 0.15 195;
+        
+        --accent: 0.88 0.15 195;
+        --accent-foreground: 0.12 0.02 240;
+        
+        --muted: 0.20 0.02 240;
+        --popover: 0.15 0.02 240;
+        --popover-foreground: 0.92 0.01 240;
+    }
+
+    * {
+        @apply border-border;
+    }
+    
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Exo 2', sans-serif;
+        background-image: url('/assets/generated/dev-rebirth-hud-bg.dim_1440x2560.png');
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+    }
+    
+    h1, h2, h3, h4, h5, h6, .heading {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+    
+    .day-counter {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 900;
+        letter-spacing: 0.15em;
+    }
+    
+    button, .button-text, label, .ui-text {
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+    }
+    
+    .paragraph-text, p, textarea, input {
+        font-family: 'Exo 2', sans-serif;
+    }
+    
+    /* Cyberpunk glow effects */
+    .cyber-glow {
+        text-shadow: 0 0 10px oklch(var(--primary) / 0.5);
+    }
+    
+    .cyber-border {
+        border: 1px solid oklch(var(--primary) / 0.3);
+        box-shadow: 0 0 10px oklch(var(--primary) / 0.1);
+    }
+    
+    .cyber-card {
+        background: oklch(var(--card) / 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid oklch(var(--primary) / 0.2);
+    }
+}

@@ -1,0 +1,342 @@
+{
+  "kind": "build_request",
+  "title": "DEV REBIRTH: Cyberpunk Discipline Tracker (Dev vs Distraction)",
+  "projectName": "DEV REBIRTH",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Implement the global cyberpunk/futuristic military UI theme exactly as specified: color palette (#0B0F14 background, #111826 cards, #00F0FF primary neon, #7A00FF secondary neon, #00FF9C success, #FF3B3B warning, #E6EDF3 primary text, #9FB3C8 secondary text), typography (Orbitron for headings/day counter, Rajdhani for buttons/UI labels, Exo 2 for paragraph/log text), ALL CAPS for main headings, and slightly expanded spacing to match a serious high-tech console style (no cute/playful visuals).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "The app should feel like a futuristic military/cyberpunk developer console, not a cute habit tracker.",
+          "Color palette (use exactly)",
+          "Font system\n\nUse futuristic military/cyber fonts:\n\nHeadings & Day Counter: Orbitron\nButtons & UI text: Rajdhani\nParagraph/log text: Exo 2",
+          "Use ALL CAPS for main headings like:\nDAY 01\nREALITY CHECK\nDISCIPLINE SCORE"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All screens use the specified hex colors for backgrounds, cards, accents, success, and warning states.",
+        "Orbitron, Rajdhani, and Exo 2 are loaded and applied to the specified text categories.",
+        "Primary section headings render in ALL CAPS with increased letter spacing.",
+        "UI feels minimal, sharp, and console-like (no rounded bubbly components, no playful iconography)."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Create the Start/Initialize screen with app title “DEV REBIRTH” and subtitle “Act like a developer. Become one.” including inputs for Developer Path (free text or selectable presets such as Web Dev/Java/Full Stack) and Start Date (default to today), plus an “INITIALIZE DAY 1” action that permanently stores the start date and routes the user to the Main Dashboard.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "1. START / INITIALIZE SCREEN\n\nApp title: DEV REBIRTH\nSubtitle: Act like a developer. Become one.\n\nInputs:\n\nDeveloper path (Web Dev, Java, Full Stack etc)\n\nStart date (default today)\n\nButton: INITIALIZE DAY 1\n\nAfter setup → go to dashboard.\n\nStore start date permanently."
+        ]
+      },
+      "acceptanceCriteria": [
+        "If no prior initialization exists, the app opens on the Initialize screen.",
+        "Start date defaults to the user’s current local date.",
+        "After clicking INITIALIZE DAY 1, the app navigates to the Dashboard and the chosen start date persists across reloads/app restarts.",
+        "If already initialized, the app bypasses initialization (unless the user explicitly resets data via a separate reset control)."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Implement the Main Dashboard (Home) showing: current day count computed from stored start date (e.g., “DAY 01”, “DAY 12 OF BECOMING A DEVELOPER”), today’s date, a discipline status message, a “today’s dev progress” indicator, navigation buttons for MORNING LOG / AFTERNOON LOG / EVENING LOG / NIGHT LOG / REALITY CHECK / HISTORY / STATS & GROWTH, and a rotating discipline quote that changes daily.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "2. MAIN DASHBOARD (HOME)\n\nShow:\n\nCurrent day count (Day X of Becoming a Developer)\n\nToday's date\n\nDiscipline status message\n\nToday's dev progress bar\n\nButtons:\n\nMORNING LOG\n\nAFTERNOON LOG\n\nEVENING LOG\n\nNIGHT LOG\n\nREALITY CHECK\n\nHISTORY\n\nSTATS & GROWTH\n\nShow rotating developer discipline quote daily."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Day count is derived from (today - startDate) + 1 using local dates.",
+        "Dashboard contains clear navigation to each required screen.",
+        "A quote is displayed and remains stable for a given date; it changes when the date changes.",
+        "Dev progress indicator updates based on today’s logged dev time (as dev logs are added/edited)."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Implement the Daily Dev Logging system for each time section (Morning, Afternoon, Evening, Night) with inputs: dev work description (text), activity checkboxes (Coding practice, Tutorial learning, Building project, Debugging/problem solving, Job preparation, Reading tech, Other), time spent learning (hours), relevance slider (0–10) labeled “How relevant were your actions toward becoming a real developer?”, focus level (Deep focus / Normal / Distracted), notes, and a SAVE ENTRY action; support auto-save per day and time section.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "3. DAILY DEV LOGGING SYSTEM\n\nEach section:\nMorning / Afternoon / Evening / Night\n\nInputs:\n\nWhat dev work did you do? (text)\n\nActivity checkboxes:\n\nCoding practice\n\nTutorial learning\n\nBuilding project\n\nDebugging/problem solving\n\nJob preparation\n\nReading tech\n\nOther\n\nTime spent learning (hours)\n\nRelevance slider (0–10)\nLabel: How relevant were your actions toward becoming a real developer?\n\nFocus level:\n\nDeep focus\n\nNormal\n\nDistracted\n\nNotes\n\nButton: SAVE ENTRY\n\nAuto-save per day and time section."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each time section has its own saved entry per date (e.g., today+Morning).",
+        "SAVE ENTRY persists the entry and shows a clear saved state.",
+        "Auto-save writes changes without requiring manual save (with a visible “saved”/“saving” indicator).",
+        "Re-opening a section for the same date/time pre-fills with previously saved values."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "After completing the Night log, show a Daily Summary view that calculates and displays: total dev hours today, average relevance score for today, an overall focus rating for today, and one of the specified messages depending on performance (High: “REAL DEVELOPER ACTIONS RECORDED.” Medium: “PROGRESS MADE. STAY CONSISTENT.” Low: “LESS TALK. MORE BUILDING TOMORROW.”).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "4. DAILY SUMMARY SYSTEM (NIGHT)\n\nAfter night log show:\n\nTotal dev hours today\n\nAverage relevance score\n\nFocus rating\n\nMessages:\nHigh score:\n“REAL DEVELOPER ACTIONS RECORDED.”\n\nMedium:\n“PROGRESS MADE. STAY CONSISTENT.”\n\nLow:\n“LESS TALK. MORE BUILDING TOMORROW.”"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Daily Summary appears after saving the Night log (and is accessible later via History).",
+        "Total dev hours equals the sum of dev hours across all four dev sections for the date.",
+        "Average relevance is computed from available relevance entries for the date (ignoring missing sections).",
+        "A deterministic rule maps the day’s performance to High/Medium/Low and displays the exact specified message text."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Implement the Reality Check dashboard (non-dev tracker) as a separate page showing: total dev hours today, total non-dev hours today, a green-vs-red comparison bar, a pie chart distribution, and the specified message logic (if dev > non-dev: “DISCIPLINE DOMINATES.” otherwise: “REALITY CHECK: DISTRACTIONS DOMINATE.”).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "5. REALITY CHECK DASHBOARD (NON-DEV TRACKER)\n\nSeparate page showing true time usage.\n\nTop section:\n\nTotal dev hours today\n\nTotal non-dev hours today\n\nComparison bar (green vs red)\n\nPie chart distribution\n\nMessage logic:\nIf dev > non-dev:\n“DISCIPLINE DOMINATES.”\n\nIf non-dev > dev:\n“REALITY CHECK: DISTRACTIONS DOMINATE.”"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Reality Check page shows today’s computed totals for dev and non-dev hours.",
+        "Comparison bar uses success color for dev and warning color for non-dev.",
+        "Pie chart renders a correct distribution based on today’s non-dev activities (and optionally dev vs non-dev).",
+        "Message matches the specified rule and uses the exact wording."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add the “Log Non-Dev Activity” form on the Reality Check page with inputs: activity type (Gaming, Social media scrolling, Watching series/movies, Random YouTube, Going out, Sleeping extra, Other), time spent (hours/minutes), category (Necessary / Time pass / Pure distraction), mood after (Good / Neutral / Regret / Wasted), notes, and SAVE ENTRY; saved entries must contribute to today’s non-dev totals and analytics.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "➕ Log Non-Dev Activity\n\nInputs:\n\nActivity type:\n\nGaming\n\nSocial media scrolling\n\nWatching series/movies\n\nRandom YouTube\n\nGoing out\n\nSleeping extra\n\nOther\n\nTime spent (hours/minutes)\n\nCategory:\n\nNecessary\n\nTime pass\n\nPure distraction\n\nMood after:\n\nGood\n\nNeutral\n\nRegret\n\nWasted\n\nNotes\n\nButton: SAVE ENTRY"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can add multiple non-dev entries per date.",
+        "Time spent supports hours and minutes and is summed accurately into a single non-dev total for the date.",
+        "Saved entries persist across reloads/app restarts.",
+        "Reality Check totals update immediately after saving an entry."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Implement Reality Analytics on the Reality Check page showing: weekly distraction hours, most common distraction, discipline score computed as dev hours ÷ (dev hours + non-dev hours) as a percentage, tier label display (80%+ HIGHLY DISCIPLINED; 50–80% IMPROVING; below 50% LOSING CONTROL), and a warning message when today’s distraction time exceeds 4 hours (“WARNING: YOU ARE SLIPPING.”).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "📊 Reality Analytics\n\nShow:\n\nWeekly distraction hours\n\nMost common distraction\n\nDiscipline score = dev hours ÷ total hours %\n\nDisplay:\n80%+ → HIGHLY DISCIPLINED\n50–80% → IMPROVING\nBelow 50% → LOSING CONTROL\n\nWarning system:\nIf distraction > 4 hrs:\n“WARNING: YOU ARE SLIPPING.”"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Weekly distraction hours aggregates the last 7 days (including today) of non-dev time.",
+        "Most common distraction identifies the activity type with the greatest total duration over the selected period (default last 7 days).",
+        "Discipline score percentage is computed and displayed with the correct tier label.",
+        "If today’s non-dev time > 4 hours, the exact warning text is shown prominently."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Create the History screen that lets the user select any date (calendar or list) and view dev logs and non-dev logs for that date, including the day number (relative to start date) and dev hours for that day.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "6. HISTORY SCREEN\n\nCalendar or list:\n\nSelect any date\n\nView dev logs\n\nView non-dev logs\n\nShow day number\n\nShow dev hours"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can navigate to History and choose a past date.",
+        "Selected date shows the four dev sections (if present) and all non-dev entries for that date.",
+        "Day number is displayed for the selected date based on stored start date.",
+        "Dev hours shown match the sum of the date’s dev section hours."
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Create the Stats & Growth screen showing: total days tracked, total dev hours, average relevance score, longest streak, weekly chart, monthly discipline %, and badges for (7 day streak, 30 day streak, 100 hours learning, no zero days streak).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "7. STATS & GROWTH SCREEN\n\nShow:\n\nTotal days tracked\n\nTotal dev hours\n\nAverage relevance score\n\nLongest streak\n\nWeekly chart\n\nMonthly discipline %\n\nBadges:\n\n7 day streak\n\n30 day streak\n\n100 hours learning\n\nNo zero days streak"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Totals and averages are computed from persisted logs (not hard-coded).",
+        "Longest streak is computed from consecutive days with non-zero dev hours (define “no zero day” consistently across the app).",
+        "Weekly and monthly visualizations render and match computed values.",
+        "Badges unlock based on the specified thresholds and remain unlocked once earned."
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Implement persistent local storage for: start date, developer path, all dev logs, all non-dev logs, streak/badge state, and computed/statistical aggregates as needed so that data persists after closing and reopening the app.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "💾 STORAGE\n\nStore locally:\n\nStart date\n\nAll dev logs\n\nNon-dev logs\n\nStreaks\n\nStats\n\nPersist data after closing app."
+        ]
+      },
+      "acceptanceCriteria": [
+        "After reload or browser restart, all previously entered data remains available.",
+        "Initialization status is preserved (start date and developer path persist).",
+        "History and Stats reflect the persisted dataset accurately."
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Add an in-app notification/reminder system UI that displays the four daily reminders (Morning: “START BUILDING”, Afternoon: “STAY RELEVANT”, Evening: “KEEP PROGRESSING”, Night: “LOG YOUR REALITY”) based on the user’s local time, without relying on external push notification services.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "🔔 NOTIFICATION SYSTEM\n\nDaily reminders:\nMorning: START BUILDING\nAfternoon: STAY RELEVANT\nEvening: KEEP PROGRESSING\nNight: LOG YOUR REALITY"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The app shows the correct reminder text for the current part of the day when the user opens the app.",
+        "Reminders are visible somewhere appropriate (e.g., dashboard banner) and use the specified exact text.",
+        "No external messaging/push infrastructure is required for the reminders to function as an in-app system."
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Provide a cohesive navigation structure across all screens (Initialize, Dashboard, each Dev Log section, Daily Summary, Reality Check, History, Stats & Growth) suitable for a mobile-first layout.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Make the app fully functional and ready to use."
+        ]
+      },
+      "acceptanceCriteria": [
+        "All required screens are reachable through obvious navigation elements.",
+        "Mobile viewport layout is usable with touch-friendly targets.",
+        "Routing/state preserves the currently selected date/section where relevant (e.g., opening a specific log section from Dashboard)."
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Define and render the “Discipline status message” and “Today’s dev progress” logic on the Dashboard using the user’s logged dev time, relevance, and focus for the current day (derived from today’s saved entries).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Discipline status message",
+          "Today's dev progress bar"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dashboard status message changes based on today’s data (e.g., no logs vs some logs vs strong day) and is deterministic.",
+        "Progress indicator updates as logs are saved/edited for today.",
+        "No placeholder/mock values remain once logging is implemented."
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Implement a brutally honest, console-like copy treatment across the UI using the provided phrases verbatim where specified (e.g., “REALITY CHECK”, “DISCIPLINE SCORE”, the summary messages, and Reality Check messages), and ensure all user-facing text is in English.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Use English for any user-facing text in the build request.",
+          "Serious. Minimal. Brutally honest.",
+          "Use ALL CAPS for main headings like:\nDAY 01\nREALITY CHECK\nDISCIPLINE SCORE"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All specified phrases appear exactly as written in the UI.",
+        "Primary headings use ALL CAPS styling.",
+        "No non-English UI strings are introduced."
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Add generated static image assets for the app (logo mark and subtle background texture) and render them in the UI (e.g., on Initialize/Dashboard backgrounds) as static files from frontend/public/assets/generated, without serving them through the backend.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "This app must feel like a futuristic developer discipline operating system."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Generated images exist under frontend/public/assets/generated and are referenced directly by the frontend.",
+        "Logo/texture are used subtly to reinforce the cyberpunk military console theme without reducing readability.",
+        "The app remains performant on mobile-sized viewports with the added imagery."
+      ]
+    }
+  ],
+  "constraints": [
+    "Use only the specified color palette values exactly as provided.",
+    "Use Orbitron for headings/day counter, Rajdhani for buttons/UI labels, and Exo 2 for paragraph/log text.",
+    "Do not implement third-party authentication providers; do not depend on push notification services, SMS, email, or WebSocket-based real-time features.",
+    "Persist data locally on the client so it remains after closing and reopening the app."
+  ],
+  "nonGoals": [
+    "Cloud deployment configuration (AWS/GCP/Azure/Vercel/Netlify)",
+    "Third-party analytics integrations",
+    "Social/sharing features",
+    "Multi-user accounts or syncing across devices unless explicitly requested later",
+    "External database usage (Postgres/MySQL/Mongo/Redis)"
+  ],
+  "imageRequirements": {
+    "required": [
+      "Futuristic angular logo mark with a minimal cyberpunk military emblem style, cyan/violet on transparent background (dev-rebirth-logo.dim_512x512.png)",
+      "Subtle futuristic HUD/grid background texture, dark cyber-black/blue with faint cyan lines (dev-rebirth-hud-bg.dim_1440x2560.png)"
+    ],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

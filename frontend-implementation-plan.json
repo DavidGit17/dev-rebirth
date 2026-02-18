@@ -1,0 +1,508 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "DEV REBIRTH: Cyberpunk Discipline Tracker (Frontend)",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Apply the specified cyberpunk/futuristic military theme (palette, typography, ALL CAPS headings, console-like spacing) globally across the app.",
+      "acceptanceCriteria": [
+        "All screens use the specified hex colors for backgrounds, cards, accents, success, and warning states.",
+        "Orbitron, Rajdhani, and Exo 2 are loaded and applied to the specified text categories.",
+        "Primary section headings render in ALL CAPS with increased letter spacing.",
+        "UI feels minimal, sharp, and console-like (no rounded bubbly components, no playful iconography)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Create global styles defining the exact palette (#0B0F14, #111826, #00F0FF, #7A00FF, #00FF9C, #FF3B3B, #E6EDF3, #9FB3C8), typography mapping (Orbitron headings/day counter, Rajdhani buttons/labels, Exo 2 paragraphs/log text), ALL CAPS heading treatment, and console-like letter spacing (avoid playful rounded styling)."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Load Orbitron, Rajdhani, and Exo 2 (e.g., via font links) and ensure the document defaults support the cyberpunk theme styling defined in frontend/src/index.css."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Align Tailwind theme tokens/variables so UI components can reference the exact specified hex colors consistently (background/card/primary/secondary/success/warning/text)."
+        },
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "create",
+          "description": "Create a mobile-first, console-like app layout wrapper (background, card surfaces, consistent padding/spacing) that all pages use. Use shadcn-ui primitives (e.g., Card) for consistent surfaces; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Create Initialize screen to collect developer path and start date (default today), persist them locally, and route to Dashboard.",
+      "acceptanceCriteria": [
+        "If no prior initialization exists, the app opens on the Initialize screen.",
+        "Start date defaults to the user’s current local date.",
+        "After clicking INITIALIZE DAY 1, the app navigates to the Dashboard and the chosen start date persists across reloads/app restarts.",
+        "If already initialized, the app bypasses initialization (unless the user explicitly resets data via a separate reset control)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/InitializePage.tsx",
+          "operation": "create",
+          "description": "Implement the Start/Initialize UI with title “DEV REBIRTH”, subtitle “Act like a developer. Become one.”, developer path input (free text + optional presets), start date input defaulting to today, and “INITIALIZE DAY 1” action. Use shadcn-ui form controls (Input, Select, Button, Card) for the console UI; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/state/storage.ts",
+          "operation": "create",
+          "description": "Implement local persistence helpers for initialization state (start date + developer path) using localStorage (and shared helpers for all logs/statistics later)."
+        },
+        {
+          "path": "frontend/src/state/useAppState.ts",
+          "operation": "create",
+          "description": "Create a central hook to read/write initialization state and expose derived flags (e.g., isInitialized) and setters used by routing and pages."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Add routing that opens Initialize when not initialized, and navigates to Dashboard after initialization. Ensure initialization bypass works when already initialized (unless reset is invoked)."
+        },
+        {
+          "path": "frontend/src/components/settings/ResetControl.tsx",
+          "operation": "create",
+          "description": "Add an explicit reset control (e.g., in Dashboard/Settings area) that clears locally stored data and returns the app to Initialize. Use shadcn-ui Button + Dialog/AlertDialog to confirm; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Implement the Main Dashboard showing day count, today’s date, discipline status, dev progress, navigation to all screens, and a daily rotating quote.",
+      "acceptanceCriteria": [
+        "Day count is derived from (today - startDate) + 1 using local dates.",
+        "Dashboard contains clear navigation to each required screen.",
+        "A quote is displayed and remains stable for a given date; it changes when the date changes.",
+        "Dev progress indicator updates based on today’s logged dev time (as dev logs are added/edited)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "create",
+          "description": "Implement Dashboard UI: DAY counter (“DAY 01” style), “DAY X OF BECOMING A DEVELOPER”, today’s date, discipline status message, dev progress indicator, navigation buttons to MORNING/AFTERNOON/EVENING/NIGHT/REALITY CHECK/HISTORY/STATS & GROWTH, and a daily rotating discipline quote. Use shadcn-ui components (Button, Card, Progress) for consistent UI; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/dates.ts",
+          "operation": "create",
+          "description": "Add local-date utilities for day index calculation, date keys, and formatting to avoid timezone issues (used by Dashboard, logs, History, Stats)."
+        },
+        {
+          "path": "frontend/src/lib/quotes.ts",
+          "operation": "create",
+          "description": "Create a deterministic daily quote selector (stable per local date, changes when date changes)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire Dashboard route and navigation targets for all required screens (including log sections, reality check, history, stats, summary)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Implement Daily Dev Logging (Morning/Afternoon/Evening/Night) with required inputs, SAVE ENTRY, and per-section auto-save per day.",
+      "acceptanceCriteria": [
+        "Each time section has its own saved entry per date (e.g., today+Morning).",
+        "SAVE ENTRY persists the entry and shows a clear saved state.",
+        "Auto-save writes changes without requiring manual save (with a visible “saved”/“saving” indicator).",
+        "Re-opening a section for the same date/time pre-fills with previously saved values."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/DevLogPage.tsx",
+          "operation": "create",
+          "description": "Create a single parameterized Dev Log page (section = Morning/Afternoon/Evening/Night) implementing: description, activity checkboxes, hours, relevance slider (0–10) with required label, focus level selector (Deep focus/Normal/Distracted), notes, SAVE ENTRY, plus autosave with visible saving/saved indicator. Use shadcn-ui components (Checkbox, Slider, RadioGroup/Select, Textarea, Button, Card) to match the console theme; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/state/devLogs.ts",
+          "operation": "create",
+          "description": "Implement local storage read/write for dev log entries keyed by date + time section; expose helpers to get/set, compute totals for a date, and update in-memory state for immediate UI updates."
+        },
+        {
+          "path": "frontend/src/hooks/useAutosave.ts",
+          "operation": "create",
+          "description": "Create a reusable autosave hook that debounces writes, tracks 'saving'/'saved' states, and is safe for per-date/per-section forms."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register routes for MORNING LOG / AFTERNOON LOG / EVENING LOG / NIGHT LOG and ensure Dashboard navigation opens the correct section."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Show Daily Summary after completing Night log, computing totals/averages/focus rating and mapping to the required performance message.",
+      "acceptanceCriteria": [
+        "Daily Summary appears after saving the Night log (and is accessible later via History).",
+        "Total dev hours equals the sum of dev hours across all four dev sections for the date.",
+        "Average relevance is computed from available relevance entries for the date (ignoring missing sections).",
+        "A deterministic rule maps the day’s performance to High/Medium/Low and displays the exact specified message text."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/DailySummaryPage.tsx",
+          "operation": "create",
+          "description": "Implement Daily Summary view for a selected date (default today) showing total dev hours, average relevance (ignore missing sections), overall focus rating, and the exact message for High/Medium/Low outcomes. Use shadcn-ui Card/Badge for clear console-like readouts; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/scoring.ts",
+          "operation": "create",
+          "description": "Add deterministic scoring logic to compute daily totals, average relevance, focus rating aggregation, and mapping to High/Medium/Low (with exact message strings)."
+        },
+        {
+          "path": "frontend/src/pages/DevLogPage.tsx",
+          "operation": "modify",
+          "description": "After a successful SAVE ENTRY on the Night section, route to the Daily Summary for that date."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a route for Daily Summary and ensure it can be reached after Night save and from History."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Implement Reality Check dashboard page with today’s dev vs non-dev totals, comparison bar, pie chart, and required message logic.",
+      "acceptanceCriteria": [
+        "Reality Check page shows today’s computed totals for dev and non-dev hours.",
+        "Comparison bar uses success color for dev and warning color for non-dev.",
+        "Pie chart renders a correct distribution based on today’s non-dev activities (and optionally dev vs non-dev).",
+        "Message matches the specified rule and uses the exact wording."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/RealityCheckPage.tsx",
+          "operation": "create",
+          "description": "Implement Reality Check page showing today’s dev hours, non-dev hours, green(success)-vs-red(warning) comparison bar, pie chart distribution, and exact message logic (“DISCIPLINE DOMINATES.” vs “REALITY CHECK: DISTRACTIONS DOMINATE.”). Use shadcn-ui components (Card, Progress) for console UI; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/charts/RealityPieChart.tsx",
+          "operation": "create",
+          "description": "Create a pie chart component for time distribution (non-dev breakdown and/or dev vs non-dev). Prefer a lightweight React chart library already compatible with the template; integrate via a dedicated component. If using shadcn-ui chart patterns or wrappers, verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/package.json",
+          "operation": "modify",
+          "description": "Add/adjust frontend dependencies needed to render the pie chart and weekly/monthly charts (e.g., a React charting library) while keeping the app mobile-performant."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route and navigation wiring for REALITY CHECK from Dashboard and global navigation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Add ‘Log Non-Dev Activity’ form on Reality Check page, persist multiple entries per date, and update totals/analytics immediately.",
+      "acceptanceCriteria": [
+        "User can add multiple non-dev entries per date.",
+        "Time spent supports hours and minutes and is summed accurately into a single non-dev total for the date.",
+        "Saved entries persist across reloads/app restarts.",
+        "Reality Check totals update immediately after saving an entry."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/reality/NonDevLogForm.tsx",
+          "operation": "create",
+          "description": "Implement the non-dev activity form with required fields (type, hours/minutes, category, mood after, notes) and SAVE ENTRY. Use shadcn-ui form components (Select, Input, Textarea, Button, Card) for consistent styling; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/state/nonDevLogs.ts",
+          "operation": "create",
+          "description": "Implement local persistence for non-dev entries (multiple per date), accurate duration normalization (hours+minutes), and selectors to compute daily totals and breakdowns by type/category."
+        },
+        {
+          "path": "frontend/src/pages/RealityCheckPage.tsx",
+          "operation": "modify",
+          "description": "Embed the NonDevLogForm and render today’s non-dev entries list; refresh totals and charts immediately after save using shared state selectors."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Add Reality Analytics on Reality Check page: weekly distraction hours, most common distraction, discipline score %, tier label, and warning when today’s distraction > 4h.",
+      "acceptanceCriteria": [
+        "Weekly distraction hours aggregates the last 7 days (including today) of non-dev time.",
+        "Most common distraction identifies the activity type with the greatest total duration over the selected period (default last 7 days).",
+        "Discipline score percentage is computed and displayed with the correct tier label.",
+        "If today’s non-dev time > 4 hours, the exact warning text is shown prominently."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/reality/RealityAnalytics.tsx",
+          "operation": "create",
+          "description": "Create analytics panel for Reality Check: weekly distraction hours (last 7 days), most common distraction (by total duration), discipline score = dev/(dev+non-dev) %, tier label (HIGHLY DISCIPLINED / IMPROVING / LOSING CONTROL), and warning banner when today’s non-dev time > 4 hours with exact text “WARNING: YOU ARE SLIPPING.”. Use shadcn-ui Card/Badge/Alert styling; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/analytics.ts",
+          "operation": "create",
+          "description": "Implement aggregation helpers for last-7-days totals, most common distraction calculation, discipline % computation, and tier mapping (deterministic)."
+        },
+        {
+          "path": "frontend/src/pages/RealityCheckPage.tsx",
+          "operation": "modify",
+          "description": "Wire RealityAnalytics into the Reality Check page and ensure it recomputes from persisted state when entries/dev logs change."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Create History screen to select a date and view dev logs + non-dev logs for that date, including day number and dev hours.",
+      "acceptanceCriteria": [
+        "User can navigate to History and choose a past date.",
+        "Selected date shows the four dev sections (if present) and all non-dev entries for that date.",
+        "Day number is displayed for the selected date based on stored start date.",
+        "Dev hours shown match the sum of the date’s dev section hours."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/HistoryPage.tsx",
+          "operation": "create",
+          "description": "Implement History page with date selection (calendar or list) and a detail view that shows: day number relative to start date, dev hours for that day, dev logs by section, and all non-dev entries. Use shadcn-ui components (Tabs/Accordion/Card/Button) for a mobile-friendly drill-down; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/history/DatePicker.tsx",
+          "operation": "create",
+          "description": "Create a mobile-friendly date selector (calendar or list) suitable for choosing any date with data. Use shadcn-ui date picker patterns if available; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a route for HISTORY and ensure it is reachable from Dashboard navigation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Create Stats & Growth screen with computed totals, streaks, weekly chart, monthly discipline %, and badges.",
+      "acceptanceCriteria": [
+        "Totals and averages are computed from persisted logs (not hard-coded).",
+        "Longest streak is computed from consecutive days with non-zero dev hours (define “no zero day” consistently across the app).",
+        "Weekly and monthly visualizations render and match computed values.",
+        "Badges unlock based on the specified thresholds and remain unlocked once earned."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/StatsGrowthPage.tsx",
+          "operation": "create",
+          "description": "Implement Stats & Growth UI showing: total days tracked, total dev hours, average relevance, longest streak, weekly chart, monthly discipline %, and badge grid (7 day streak, 30 day streak, 100 hours learning, no zero days streak). Use shadcn-ui Card/Badge/Progress for console-like readouts; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/charts/WeeklyChart.tsx",
+          "operation": "create",
+          "description": "Create a weekly chart component (last 7 days) for dev/non-dev and/or discipline % trends, using the same chart library chosen for Reality charts. If using shadcn-ui chart patterns, verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/stats.ts",
+          "operation": "create",
+          "description": "Implement computations for totals, averages, longest streak (consecutive days with dev hours > 0), monthly discipline % aggregation, and badge unlocking rules with persistent unlocked state."
+        },
+        {
+          "path": "frontend/src/state/badges.ts",
+          "operation": "create",
+          "description": "Persist badge/streak state locally and ensure badges remain unlocked once earned while still recomputing live stats from logs."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a route for STATS & GROWTH and ensure it is reachable from Dashboard navigation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Implement persistent local storage for initialization, dev logs, non-dev logs, streaks/badges, and stats inputs so data persists across restarts.",
+      "acceptanceCriteria": [
+        "After reload or browser restart, all previously entered data remains available.",
+        "Initialization status is preserved (start date and developer path persist).",
+        "History and Stats reflect the persisted dataset accurately."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/state/storage.ts",
+          "operation": "modify",
+          "description": "Expand storage layer to cover: start date, developer path, dev logs, non-dev logs, and badge/streak state with versioning/migration safeguards to avoid breaking existing saved data."
+        },
+        {
+          "path": "frontend/src/state/devLogs.ts",
+          "operation": "modify",
+          "description": "Ensure dev log state is hydrated from local storage on app load and writes back on save/autosave."
+        },
+        {
+          "path": "frontend/src/state/nonDevLogs.ts",
+          "operation": "modify",
+          "description": "Ensure non-dev log state is hydrated from local storage on app load and writes back on save."
+        },
+        {
+          "path": "frontend/src/state/badges.ts",
+          "operation": "modify",
+          "description": "Ensure badge/streak state is hydrated and persisted; keep computed stats derived from logs consistent across reloads."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Initialize app state providers (if needed) so pages render from hydrated local data before computing day counts, history lists, and stats."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Add in-app reminder system UI showing one of four daily reminder texts based on local time (no push services).",
+      "acceptanceCriteria": [
+        "The app shows the correct reminder text for the current part of the day when the user opens the app.",
+        "Reminders are visible somewhere appropriate (e.g., dashboard banner) and use the specified exact text.",
+        "No external messaging/push infrastructure is required for the reminders to function as an in-app system."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/reminders/ReminderBanner.tsx",
+          "operation": "create",
+          "description": "Implement an in-app reminder banner that selects and displays the exact text for the current local time segment: Morning “START BUILDING”, Afternoon “STAY RELEVANT”, Evening “KEEP PROGRESSING”, Night “LOG YOUR REALITY”. Use shadcn-ui Alert/Card styling; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/reminders.ts",
+          "operation": "create",
+          "description": "Add deterministic local-time mapping logic (morning/afternoon/evening/night) used by the reminder UI."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Render ReminderBanner in a prominent dashboard location and ensure it updates appropriately when the app is opened (and optionally on an interval while open)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Provide cohesive, mobile-first navigation across all required screens (Initialize, Dashboard, Dev Logs, Daily Summary, Reality Check, History, Stats & Growth).",
+      "acceptanceCriteria": [
+        "All required screens are reachable through obvious navigation elements.",
+        "Mobile viewport layout is usable with touch-friendly targets.",
+        "Routing/state preserves the currently selected date/section where relevant (e.g., opening a specific log section from Dashboard)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Implement the full mobile-first routing map and ensure navigation preserves section/date context (e.g., log section route params; history date query/params; summary date)."
+        },
+        {
+          "path": "frontend/src/components/navigation/BottomNav.tsx",
+          "operation": "create",
+          "description": "Create a touch-friendly bottom navigation (or compact console nav) for key areas (Dashboard, Reality Check, History, Stats). Use shadcn-ui Button and icon strategy consistent with non-playful console style; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Wire global layout + navigation container so every screen is consistently wrapped and mobile-friendly."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Ensure dashboard navigation buttons route to the correct screens and preserve date/section state where relevant."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Define deterministic discipline status message and today’s dev progress logic on Dashboard based on today’s logs (time, relevance, focus).",
+      "acceptanceCriteria": [
+        "Dashboard status message changes based on today’s data (e.g., no logs vs some logs vs strong day) and is deterministic.",
+        "Progress indicator updates as logs are saved/edited for today.",
+        "No placeholder/mock values remain once logging is implemented."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/scoring.ts",
+          "operation": "modify",
+          "description": "Add/extend deterministic logic to derive (for today): status message selection rules, progress calculation from dev hours/relevance/focus, and any normalization thresholds used consistently throughout the app."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Replace any placeholder values with computed values from persisted dev logs: discipline status message and today’s dev progress indicator update reactively when logs change."
+        },
+        {
+          "path": "frontend/src/state/devLogs.ts",
+          "operation": "modify",
+          "description": "Expose selectors for today’s computed aggregates (total hours, average relevance, focus distribution) used by Dashboard and Reality analytics."
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "Apply console-like, brutally honest English copy across the UI using provided phrases verbatim and ALL CAPS headings.",
+      "acceptanceCriteria": [
+        "All specified phrases appear exactly as written in the UI.",
+        "Primary headings use ALL CAPS styling.",
+        "No non-English UI strings are introduced."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/copy.ts",
+          "operation": "create",
+          "description": "Centralize required verbatim phrases (e.g., “REALITY CHECK”, “DISCIPLINE SCORE”, summary messages, Reality Check messages) and shared labels to prevent accidental wording drift and ensure English-only UI strings."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Update dashboard headings/labels to use the centralized copy and ensure ALL CAPS heading styling is applied consistently."
+        },
+        {
+          "path": "frontend/src/pages/RealityCheckPage.tsx",
+          "operation": "modify",
+          "description": "Ensure Reality Check headings and messages use the exact specified wording via centralized copy."
+        },
+        {
+          "path": "frontend/src/pages/DailySummaryPage.tsx",
+          "operation": "modify",
+          "description": "Ensure summary performance messages use the exact specified strings via centralized copy."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Ensure global typography and heading styles enforce ALL CAPS for main headings and consistent letter spacing without altering required verbatim phrases."
+        }
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "summary": "Add required generated static image assets (logo and HUD background texture) under frontend/public/assets/generated and render them subtly in the UI.",
+      "acceptanceCriteria": [
+        "Generated images exist under frontend/public/assets/generated and are referenced directly by the frontend.",
+        "Logo/texture are used subtly to reinforce the cyberpunk military console theme without reducing readability.",
+        "The app remains performant on mobile-sized viewports with the added imagery."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/dev-rebirth-logo.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated static logo asset as specified (cyan/violet on transparent background)."
+        },
+        {
+          "path": "frontend/public/assets/generated/dev-rebirth-hud-bg.dim_1440x2560.png",
+          "operation": "create",
+          "description": "Add the generated subtle HUD/grid background texture as specified (dark cyber-black/blue with faint cyan lines)."
+        },
+        {
+          "path": "frontend/src/pages/InitializePage.tsx",
+          "operation": "modify",
+          "description": "Render the static logo from frontend/public/assets/generated/dev-rebirth-logo.dim_512x512.png and apply the subtle HUD texture from frontend/public/assets/generated/dev-rebirth-hud-bg.dim_1440x2560.png in a readability-safe way (no backend serving)."
+        },
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Apply the HUD/background texture globally where appropriate using frontend/public/assets/generated/dev-rebirth-hud-bg.dim_1440x2560.png and include subtle logo placement where it reinforces branding without harming legibility."
+        }
+      ]
+    }
+  ]
+}
